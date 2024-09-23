@@ -4,10 +4,10 @@ import { protectRoute } from "../middleware/protectRoute.js";
 
 const route =express.Router();
 
+route.get("/getMe",protectRoute, getMe)
 route.post("/signUp",signUp);
 route.post("/logIn", login);
 route.post("/logOut", logout);
-route.get("/getMe",protectRoute, getMe)
 
 
 

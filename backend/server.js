@@ -5,14 +5,14 @@ import connectMongoDB from "./db/db.connect.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
-const port =process.env.PORT || 8000
 
 dotenv.config();
+const port = process.env.PORT || 8000
 
 app.use(express.json());
-app.use("/api/auth", authRoute);
-app.use(express.urlencoded({ extended: true })); // to parse from data(urlencoded)
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true })); // to parse from data(urlencoded)
+app.use("/api/auth", authRoute);
 app.listen(port, () => {
   console.log(`Server is runing on port ${port}.`);
   connectMongoDB();
