@@ -89,7 +89,8 @@ export const followUnfollowUser = async (req, res) => {
 export const updateUserProfile = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { fullName, username, profileImage, coverImage, bio, link ,email} =req.body;
+    const { fullName, username, bio, link ,email} =req.body;
+    let { profileImage, coverImage} = req.body
 
     let user = await User.findById(userId);
 
