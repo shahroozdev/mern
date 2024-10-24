@@ -33,17 +33,17 @@ export const signUp = async (req, res) => {
       await newUser.save();
     res
       .status(201)
-      .json({
-        _id: newUser._id,
-        fullName: newUser.fullName,
-        username: newUser.username,
-        email: newUser.email,
-        followers: newUser.followers, 
-        following: newUser.following, 
-        profileImage:newUser.profileImage,
-        coverImage:newUser.coverImage,
-        bio:newUser.bio
-      });
+      .json({user:{
+        _id: newUser?._id,
+        fullName: newUser?.fullName,
+        username: newUser?.username,
+        email: newUser?.email,
+        followers: newUser?.followers, 
+        following: newUser?.following, 
+        profileImage:newUser?.profileImage,
+        coverImage:newUser?.coverImage,
+        bio:newUser?.bio
+      },message:'User created successfully.'});
     }else{
         res.status(422).json({error:"Invalid user data."})
     }
@@ -66,7 +66,7 @@ export const login = async(req, res) => {
         generateTokenAndSetCookie(isExistingUsername._id, res);
         res
       .status(201)
-      .json({
+      .json({user:{
         _id: isExistingUsername._id,
         fullName: isExistingUsername.fullName,
         username: isExistingUsername.username,
@@ -76,7 +76,7 @@ export const login = async(req, res) => {
         profileImage:isExistingUsername.profileImage,
         coverImage:isExistingUsername.coverImage,
         bio:isExistingUsername.bio
-      });
+      },message:"Log in successfully."});
       } catch (error) {
         res.status(500).json({error:`Some error occurs on Sever. Try again. ${error.message}`})
       }

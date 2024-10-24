@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-import ProfileHeaderSkeleton from "../../components/skeleton/ProfileHeaderSkeleton";
-import EditProfileModal from "./EditProfileModal";
+import ProfileHeaderSkeleton from "../../components/skeleton/profileHeaderSkeleton";
+import EditProfileModal from "./editProfileModal";
 
 import { POSTS } from "../../utils/db/dummy";
 
@@ -17,8 +17,8 @@ const ProfilePage = () => {
   const [profileImg, setProfileImg] = useState(null);
   const [feedType, setFeedType] = useState("posts");
 
-  const coverImgRef = useRef(null);
-  const profileImgRef = useRef(null);
+  const coverImgRef = useRef<any>(null);
+  const profileImgRef = useRef<any>(null);
 
   const isLoading = false;
   const isMyProfile = true;
@@ -40,8 +40,8 @@ const ProfilePage = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        state === "coverImg" && setCoverImg(reader.result);
-        state === "profileImg" && setProfileImg(reader.result);
+        state === "coverImg" && setCoverImg(reader.result as any);
+        state === "profileImg" && setProfileImg(reader.result as any);
       };
       reader.readAsDataURL(file);
     }

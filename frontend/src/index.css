@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.submit-btn {
+    @apply btn rounded-full btn-primary text-white;
+  }
