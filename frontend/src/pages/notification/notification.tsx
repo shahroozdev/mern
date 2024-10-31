@@ -4,32 +4,18 @@ import LoadingSpinner from "../../components/common/loadingSpiner";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
+import { useFetchData, useGetData } from "../../hooks/customHooks";
 
 const NotificationPage = () => {
-	const isLoading = false;
-	const notifications = [
-		{
-			_id: "1",
-			from: {
-				_id: "1",
-				username: "johndoe",
-				profileImg: "/avatars/boy2.png",
-			},
-			type: "follow",
-		},
-		{
-			_id: "2",
-			from: {
-				_id: "2",
-				username: "janedoe",
-				profileImg: "/avatars/girl1.png",
-			},
-			type: "like",
-		},
-	];
+	const {data:notifications, isLoading} = useGetData({url:`/notification/allNotifications`, qKey:'notification'})
+	const { fetchData} = useFetchData();
 
-	const deleteNotifications = () => {
-		alert("All notifications deleted");
+	const deleteNotifications = async() => {
+		await fetchData({
+			url: `/notification/delete`,
+			qKey: "notification",
+			method: "GET",
+		  });
 	};
 
 	return (
@@ -65,7 +51,7 @@ const NotificationPage = () => {
 							<Link to={`/profile/${notification.from.username}`}>
 								<div className='avatar'>
 									<div className='w-8 rounded-full'>
-										<img src={notification.from.profileImg || "/avatar-placeholder.png"} />
+										<img src={notification.from.profileImage || "/avatars/boy1.png"} />
 									</div>
 								</div>
 								<div className='flex gap-1'>

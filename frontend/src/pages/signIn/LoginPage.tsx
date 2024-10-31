@@ -5,10 +5,11 @@ import { Link } from "react-router-dom";
 import XSvg from "../../components/svgs/X.tsx";
 import { signInForm } from "../../utils/forms/formsArrays.tsx";
 import CustomForm from "../../components/molecules/form/index.tsx";
-import { useMutate } from "../../hooks/customHooks.tsx";
+import {useMutate } from "../../hooks/customHooks.tsx";
 
 const LoginPage : FC = () => {
-	const {mutate} =useMutate({url:'/auth/logIn', qKey:'signIn', sendTo:'/'})
+	const {mutate} =useMutate({url:'/auth/logIn', qKey:'profile', sendTo:'/'})
+
 	const onSubmit = async(values:any) => {
 		await mutate(values)
 	};

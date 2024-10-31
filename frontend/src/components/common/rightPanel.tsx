@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import RightPanelSkeleton from "../skeleton/rightPanelSkeleton";
-import { USERS_FOR_RIGHT_PANEL } from "../../utils/db/dummy";
+import { useFetchData, useGetData } from "../../hooks/customHooks";
+import LoadingSpinner from "./loadingSpiner";
+
 
 const RightPanel = () => {
-	const isLoading = false;
+	const {data, isLoading} = useGetData({url:`/users/suggested`, qKey:'suggestedUser'})
+	const {fetchData, isLoading:isPending} =useFetchData()
 
 	return (
 		<div className='hidden lg:block my-4 mx-2'>
@@ -19,8 +22,8 @@ const RightPanel = () => {
 							<RightPanelSkeleton />
 						</>
 					)}
-					{!isLoading &&
-						USERS_FOR_RIGHT_PANEL?.map((user) => (
+					{(!isLoading) &&
+						data?.map((user) => (
 							<Link
 								to={`/profile/${user.username}`}
 								className='flex items-center justify-between gap-4'
@@ -29,7 +32,7 @@ const RightPanel = () => {
 								<div className='flex gap-2 items-center'>
 									<div className='avatar'>
 										<div className='w-8 rounded-full'>
-											<img src={user.profileImg || "/avatar-placeholder.png"} />
+											<img src={user.profileImage || "/avatars/boy1	.png"} />
 										</div>
 									</div>
 									<div className='flex flex-col'>
@@ -42,9 +45,9 @@ const RightPanel = () => {
 								<div>
 									<button
 										className='btn bg-white text-black hover:bg-white hover:opacity-90 rounded-full btn-sm'
-										onClick={(e) => e.preventDefault()}
+										onClick={async(e) => {e.preventDefault();await fetchData({url:`/users/follow/${user?._id}`, qKey:'suggestedUser', method:'GET'})}}
 									>
-										Follow
+										{isPending?<LoadingSpinner size="sm"/>:"Follow"}
 									</button>
 								</div>
 							</Link>

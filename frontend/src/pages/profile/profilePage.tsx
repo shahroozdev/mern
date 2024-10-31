@@ -1,40 +1,32 @@
-import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
 import ProfileHeaderSkeleton from "../../components/skeleton/profileHeaderSkeleton";
 import EditProfileModal from "./editProfileModal";
-
-import { POSTS } from "../../utils/db/dummy";
 
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import Posts from "../../components/common/posts";
+import { useFetchedData, useGetData} from "../../hooks/customHooks";
+import dayjs from "dayjs";
 
 const ProfilePage = () => {
+  const params = useParams()
+  const {data:user, isLoading, refetch, isRefetching} = useGetData({url:`/users/profile/${params.username}`, qKey:'userProfile', noRetry:true})
   const [coverImg, setCoverImg] = useState(null);
   const [profileImg, setProfileImg] = useState(null);
-  const [feedType, setFeedType] = useState("posts");
+  const [feedType, setFeedType] = useState(`userPosts/${params.username}`);
+  const myself:any = useFetchedData('profile')
+  const POSTS:any = useFetchedData('posts')
 
   const coverImgRef = useRef<any>(null);
   const profileImgRef = useRef<any>(null);
 
-  const isLoading = false;
-  const isMyProfile = true;
+  const isMyProfile = params.username ===myself?.username
 
-  const user = {
-    _id: "1",
-    fullName: "John Doe",
-    username: "johndoe",
-    profileImg: "/avatars/boy2.png",
-    coverImg: "/cover.png",
-    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    link: "https://youtube.com/@asaprogrammer_",
-    following: ["1", "2", "3"],
-    followers: ["1", "2", "3"],
-  };
-
+  useEffect(()=>{refetch();if(params.username){setFeedType(`userPosts/${params.username}`)}},[params])
   const handleImgChange = (e, state) => {
     const file = e.target.files[0];
     if (file) {
@@ -47,16 +39,18 @@ const ProfilePage = () => {
     }
   };
 
+  console.log(user, myself)
+
   return (
     <>
       <div className="flex-[4_4_0]  border-r border-gray-700 min-h-screen ">
         {/* HEADER */}
-        {isLoading && <ProfileHeaderSkeleton />}
-        {!isLoading && !user && (
+        {isLoading || isRefetching && <ProfileHeaderSkeleton />}
+        {!isLoading && !isRefetching && !user && (
           <p className="text-center text-lg mt-4">User not found</p>
         )}
         <div className="flex flex-col">
-          {!isLoading && user && (
+          {!isLoading && !isRefetching  && user && (
             <>
               <div className="flex gap-10 px-4 py-2 items-center">
                 <Link to="/">
@@ -72,7 +66,7 @@ const ProfilePage = () => {
               {/* COVER IMG */}
               <div className="relative group/cover">
                 <img
-                  src={coverImg || user?.coverImg || "/cover.png"}
+                  src={coverImg || user?.coverImage || "/cover.png"}
                   className="h-52 w-full object-cover"
                   alt="cover image"
                 />
@@ -103,8 +97,8 @@ const ProfilePage = () => {
                     <img
                       src={
                         profileImg ||
-                        user?.profileImg ||
-                        "/avatar-placeholder.png"
+                        user?.profileImage ||
+                        "/avatars/boy1.png"
                       }
                     />
                     <div className="absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
@@ -166,7 +160,7 @@ const ProfilePage = () => {
                   <div className="flex gap-2 items-center">
                     <IoCalendarOutline className="w-4 h-4 text-slate-500" />
                     <span className="text-sm text-slate-500">
-                      Joined July 2021
+                      Joined {dayjs(user?.createdAt).format("MMM YYYY")}
                     </span>
                   </div>
                 </div>
@@ -188,19 +182,19 @@ const ProfilePage = () => {
               <div className="flex w-full border-b border-gray-700 mt-4">
                 <div
                   className="flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 relative cursor-pointer"
-                  onClick={() => setFeedType("posts")}
+                  onClick={() => setFeedType(`userPosts/${params.username}`)}
                 >
                   Posts
-                  {feedType === "posts" && (
+                  {feedType === `userPosts/${params.username}` && (
                     <div className="absolute bottom-0 w-10 h-1 rounded-full bg-primary" />
                   )}
                 </div>
                 <div
                   className="flex justify-center flex-1 p-3 text-slate-500 hover:bg-secondary transition duration-300 relative cursor-pointer"
-                  onClick={() => setFeedType("likes")}
+                  onClick={() => setFeedType(`allLikedPost/${user?._id}`)}
                 >
                   Likes
-                  {feedType === "likes" && (
+                  {feedType === `allLikedPost/${user?._id}` && (
                     <div className="absolute bottom-0 w-10  h-1 rounded-full bg-primary" />
                   )}
                 </div>
@@ -208,7 +202,7 @@ const ProfilePage = () => {
             </>
           )}
 
-          <Posts />
+          <Posts type={feedType}/>
         </div>
       </div>
     </>

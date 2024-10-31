@@ -9,4 +9,4 @@ export type signInForm={
     password: string,
 }
 
-export type HTTPMETHODS='POST'|'PUT'|'DELETE'
+export type HTTPMETHODS='POST'|'PUT'|'DELETE'|'GET'

@@ -2,9 +2,11 @@ import { v2 as cloudaniry } from "cloudinary";
 import Post from "../models/post.model.js";
 import { checkUserExists } from "../lib/generalFunc.js";
 import User from "../models/user.model.js";
+import Notification from "../models/notification.model.js";
 
 export const createPost = async (req, res) => {
   let { text, img } = req.body;
+
   try {
     const userId = req.user._id;
     await checkUserExists(userId, res);
@@ -12,12 +14,10 @@ export const createPost = async (req, res) => {
     if (!text && !img) {
       return res.status(422).json({ error: "Post must have text or image." });
     }
-
     if (img) {
-      const response = await cloudaniry.uploader.upload(profileImage);
+      const response = await cloudaniry.uploader.upload(img).catch((err)=> {console.log(err)});
       img = response.secure_url;
     }
-
     const newPost = new Post({
       user: userId,
       text,
@@ -43,7 +43,8 @@ export const likeUnlikePost = async (req, res) => {
     if(isUserLikedPostBefore){
         await Post.updateOne({_id:id},{$pull:{likes:userId}})
         await User.updateOne({_id:userId},{$pull:{likedPosts:id}})
-        return res.status(404).json({error:"Post unliked."})
+        const updatedLikes = post.likes.filter((key)=>(key._id.toString() !== userId.toString()))
+        return res.status(200).json({message:"Post unliked.", updatedLikes})
     }else{
         post.likes.push(userId)
         await post.save();
@@ -54,7 +55,8 @@ export const likeUnlikePost = async (req, res) => {
             type:"like"
         })
         await notification.save();
-        return res.status(200).json({error:"Post liked."})
+        const updatedLikes = post.likes
+        return res.status(200).json({message:"Post liked.", updatedLikes})
     }
   } catch (error) {
     return res.status(500).json({
@@ -78,7 +80,7 @@ export const commentOnPost = async (req, res) => {
     
     post.comments.push(comment);
     await post.save();
-    return res.status(200).json({error:"comment send successfully."})
+    return res.status(200).json({message:"comment send successfully."})
   } catch (error) {
     return res.status(500).json({
       error: `Some error occurs on Sever. Try again. ${error.message}`,

@@ -65,7 +65,7 @@ export const login = async(req, res) => {
         }
         generateTokenAndSetCookie(isExistingUsername._id, res);
         res
-      .status(201)
+      .status(200)
       .json({user:{
         _id: isExistingUsername._id,
         fullName: isExistingUsername.fullName,

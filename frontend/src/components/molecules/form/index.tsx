@@ -10,12 +10,12 @@ const CustomForm = ({ props }:{props: any}) => {
     formState: { errors },
   } = useForm<z.infer<typeof props.schema>>({
     resolver: zodResolver(props.schema),
-    // defaultValues: props?.defaultVaules||{}  // Use Zod schema as resolver for validation
+    defaultValues: props?.defaultVaules||{}  // Use Zod schema as resolver for validation
   });
   const onSubmit:SubmitHandler<any> = (values: any) => {
-    console.log(values)
     props.onSubmit(values); // Ensure onSubmit from props is used
   };
+  console.log(props.defaultValues)
   return (
     <form onSubmit={handleSubmit(onSubmit)}  className={`${props?.style||''}`}>
         {props?.preNode}

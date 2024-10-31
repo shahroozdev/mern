@@ -5,7 +5,7 @@ import {v2 as cloudaniry} from "cloudinary"
 export const getUserProfileByUsername = async (req, res) => {
   const { username } = req.params;
   try {
-    const user = await User.findOne(username).select("-password");
+    const user = await User.findOne({username}).select("-password");
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
@@ -26,7 +26,7 @@ export const getSuggestedUsers = async (req, res) => {
     const users = await User.aggregate([
       {
         $match: {
-          id: { $ne: userId },
+          _id: { $ne: userId },
         },
       },
       { $sample: { size: 10 } },
@@ -94,7 +94,6 @@ export const updateUserProfile = async (req, res) => {
 
     let user = await User.findById(userId);
 
-    console.log(user, 'user',req.body)
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }

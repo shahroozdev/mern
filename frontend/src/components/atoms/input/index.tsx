@@ -46,7 +46,13 @@ const CustomInput = ({ props }: { props: CustomInputProps }) => {
         />
         {props.item.postNode}
         </div>
-      ) : (
+      ) : props.item.type === "textarea" ? (
+        <textarea
+          id={props.item.inputName}
+          {...props.register(props.item.inputName)}
+          className={`grow`}
+        />
+      ):(
         <input
           type={props.item.type}
           id={props.item.inputName}

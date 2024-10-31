@@ -18,3 +18,19 @@ export const signInSchema = z.object({
     .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter' })
     .regex(/[^a-zA-Z0-9]/, { message: 'Password must contain at least one special character' }),
 });
+export const updateProfileSchema = z.object({
+  email: z.string().email({ message: 'Invalid email address' }),
+  username: z.string().trim().min(1, { message:'Username is required'}),
+  fullName: z.string().trim().min(1, { message:'Name is required'}),
+  bio: z.string().trim().min(1, { message:'Bio is required'}),
+  currentPassword: z.string().trim().min(1, { message:'Password is required'})
+    .min(8, { message: 'Password must be at least 8 characters long' })
+    .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter' })
+    .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter' })
+    .regex(/[^a-zA-Z0-9]/, { message: 'Password must contain at least one special character' }),
+  newPassword: z.string().trim().min(1, { message:'Password is required'})
+    .min(8, { message: 'Password must be at least 8 characters long' })
+    .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter' })
+    .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter' })
+    .regex(/[^a-zA-Z0-9]/, { message: 'Password must contain at least one special character' }),
+});

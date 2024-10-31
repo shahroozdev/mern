@@ -1,25 +1,28 @@
 import PostSkeleton from "../skeleton/postSkeleton.tsx";
-import { POSTS } from "../../utils/db/dummy.ts";
-import React from "react";
+import React, { useEffect } from "react";
 import {PostProps } from "../../types/interfaces.ts";
 import Post from "./post.tsx";
+import { useGetData } from "../../hooks/customHooks.tsx";
+import { useParams } from "react-router-dom";
 
-const Posts: React.FC = () => {
-	const isLoading = false;
+const Posts: React.FC<{type:string}> = ({type}) => {
+	const {data, isLoading, refetch, isRefetching} = useGetData({url:`/posts/${type}`, qKey:'posts'})
+	const params = useParams()
+	useEffect(()=>{refetch()},[type, params])
 
 	return (
 		<>
-			{isLoading && (
+			{(isLoading||isRefetching) && (
 				<div className='flex flex-col justify-center'>
 					<PostSkeleton />
 					<PostSkeleton />
 					<PostSkeleton />
 				</div>
 			)}
-			{!isLoading && POSTS?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch 👻</p>}
-			{!isLoading && POSTS && (
+			{!isLoading && data?.length === 0 && <p className='text-center my-4'>No posts in this tab. Switch 👻</p>}
+			{!isLoading && data && (
 				<div>
-					{POSTS.map((post:PostProps) => (
+					{data?.map((post:PostProps) => (
 							<Post key={post._id} post={post} />
 					))}
 				</div>
