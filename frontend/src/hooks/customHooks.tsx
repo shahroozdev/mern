@@ -38,7 +38,7 @@ export const useFetchData=()=>{
 }
 return {fetchData, isLoading}
 }
-export const useMutate = (values:{url:string, qKey:string, method?:HTTPMETHODS, sendTo?:string, isMulti?:Boolean})=>{
+export const useMutate = (values:{url:string, qKey:string|string[], method?:HTTPMETHODS, sendTo?:string, isMulti?:Boolean})=>{
     const queryClient = useQueryClient()
     const { showToast } = useToast();
     const navigate = useNavigate();
@@ -48,7 +48,6 @@ export const useMutate = (values:{url:string, qKey:string, method?:HTTPMETHODS, 
           const formData = new FormData()
           Object.entries(data).forEach(([key, value]:[string, any]) => {formData.append(key, value);})
           const body = data&&values.isMulti?formData:JSON.stringify(data)
-          console.log(body, 'body')
            try {
              const res = await fetch('/api'+values?.url,{
                 method:values?.method||"POST",
@@ -60,7 +59,6 @@ export const useMutate = (values:{url:string, qKey:string, method?:HTTPMETHODS, 
              const result = await res.json();
              if (!res.ok) {
                 showToast(result.error, 'error');
-                console.log(result)
                 throw new Error(result.error);
               }
               showToast(result.message, 'success');

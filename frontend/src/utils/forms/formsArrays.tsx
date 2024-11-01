@@ -107,7 +107,7 @@ export const updateProfileForm={
             {
                 type:'password',
                 placeHolder:'Current Password',
-                inputName:'currentPassword',
+                inputName:'oldPassword',
                 pStyle:'flex-1 input border border-gray-700 rounded p-2 input-md',
             },
             {

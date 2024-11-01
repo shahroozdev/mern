@@ -103,10 +103,8 @@ export const updateUserProfile = async (req, res) => {
             const image_url = user?.profileImage?.split('/')?.pop()?.split('.')[0]
             await cloudaniry.uploader.destroy(image_url)
         }
-
         const response = await cloudaniry.uploader.upload(profileImage)
           profileImage = response.secure_url
-          console.log(response)
     }
     if(coverImage){
         if(user?.coverImage){

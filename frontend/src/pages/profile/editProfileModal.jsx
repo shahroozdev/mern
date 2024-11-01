@@ -3,10 +3,15 @@ import {useFetchedData, useMutate } from "../../hooks/customHooks.tsx";
 import { updateProfileForm } from "../../utils/forms/formsArrays.tsx";
 
 const EditProfileModal = () => {
-	const {mutate} =useMutate({url:'/users/update', qKey:'profile'})
+	const {mutate} =useMutate({url:'/users/update', qKey:['profile','userProfile']})
+	const {mutate:changePassword} =useMutate({url:'/users/changePassword', qKey:['profile','userProfile'], method:'PUT'})
 	const myself = useFetchedData('profile')
 	const onSubmit =async(values)=>{
-		await mutate(values)
+		const {newPassword, oldPassword, ...rest} = values
+		await mutate(rest)
+		if(values?.newPassword && values?.oldPassword){
+			await changePassword({newPassword, oldPassword})
+		}
 	}
 
 	return (

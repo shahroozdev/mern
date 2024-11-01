@@ -2,20 +2,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {z}  from 'zod'
 import { SubmitHandler, useForm } from "react-hook-form";
 import CustomInput from "../../atoms/input";
+import { CustomFormProps } from "../../../types/interfaces";
 
-const CustomForm = ({ props }:{props: any}) => {
+const CustomForm = ({ props }:{props: CustomFormProps}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<z.infer<typeof props.schema>>({
     resolver: zodResolver(props.schema),
-    defaultValues: props?.defaultVaules||{}  // Use Zod schema as resolver for validation
+    defaultValues: {...props?.defaultValues} // Use Zod schema as resolver for validation
   });
   const onSubmit:SubmitHandler<any> = (values: any) => {
     props.onSubmit(values); // Ensure onSubmit from props is used
   };
-  console.log(props.defaultValues)
+ 
   return (
     <form onSubmit={handleSubmit(onSubmit)}  className={`${props?.style||''}`}>
         {props?.preNode}

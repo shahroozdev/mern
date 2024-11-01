@@ -9,14 +9,15 @@ import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import Posts from "../../components/common/posts";
-import { useFetchedData, useGetData} from "../../hooks/customHooks";
+import { useFetchedData, useGetData, useMutate} from "../../hooks/customHooks";
 import dayjs from "dayjs";
 
 const ProfilePage = () => {
   const params = useParams()
   const {data:user, isLoading, refetch, isRefetching} = useGetData({url:`/users/profile/${params.username}`, qKey:'userProfile', noRetry:true})
-  const [coverImg, setCoverImg] = useState(null);
-  const [profileImg, setProfileImg] = useState(null);
+  const {mutate} =useMutate({url:'/users/update', qKey:['userProfile', 'profile']})
+  const [coverImage, setCoverImg] = useState(null);
+  const [profileImage, setProfileImg] = useState(null);
   const [feedType, setFeedType] = useState(`userPosts/${params.username}`);
   const myself:any = useFetchedData('profile')
   const POSTS:any = useFetchedData('posts')
@@ -27,7 +28,7 @@ const ProfilePage = () => {
   const isMyProfile = params.username ===myself?.username
 
   useEffect(()=>{refetch();if(params.username){setFeedType(`userPosts/${params.username}`)}},[params])
-  const handleImgChange = (e, state) => {
+  const handleImgChange = async(e, state) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -39,18 +40,25 @@ const ProfilePage = () => {
     }
   };
 
-  console.log(user, myself)
+  useEffect(() => {
+    const updateImage = async () => {
+      if (coverImage || profileImage) {
+        await mutate({ coverImage, profileImage });
+      }
+    };
+    updateImage();
+  }, [coverImage, profileImage]);
 
   return (
     <>
       <div className="flex-[4_4_0]  border-r border-gray-700 min-h-screen ">
         {/* HEADER */}
-        {isLoading || isRefetching && <ProfileHeaderSkeleton />}
+        <div className="flex flex-col">
         {!isLoading && !isRefetching && !user && (
           <p className="text-center text-lg mt-4">User not found</p>
         )}
-        <div className="flex flex-col">
-          {!isLoading && !isRefetching  && user && (
+        {isLoading || isRefetching ? <ProfileHeaderSkeleton />
+        :(
             <>
               <div className="flex gap-10 px-4 py-2 items-center">
                 <Link to="/">
@@ -66,7 +74,7 @@ const ProfilePage = () => {
               {/* COVER IMG */}
               <div className="relative group/cover">
                 <img
-                  src={coverImg || user?.coverImage || "/cover.png"}
+                  src={coverImage || user?.coverImage || "/cover.png"}
                   className="h-52 w-full object-cover"
                   alt="cover image"
                 />
@@ -96,7 +104,7 @@ const ProfilePage = () => {
                   <div className="w-32 rounded-full relative group/avatar">
                     <img
                       src={
-                        profileImg ||
+                        profileImage ||
                         user?.profileImage ||
                         "/avatars/boy1.png"
                       }
@@ -122,7 +130,7 @@ const ProfilePage = () => {
                     Follow
                   </button>
                 )}
-                {(coverImg || profileImg) && (
+                {(coverImage || profileImage) && (
                   <button
                     className="btn btn-primary rounded-full btn-sm text-white px-4 ml-2"
                     onClick={() => alert("Profile updated successfully")}
@@ -131,7 +139,6 @@ const ProfilePage = () => {
                   </button>
                 )}
               </div>
-
               <div className="flex flex-col gap-4 mt-14 px-4">
                 <div className="flex flex-col">
                   <span className="font-bold text-lg">{user?.fullName}</span>
@@ -147,12 +154,12 @@ const ProfilePage = () => {
                       <>
                         <FaLink className="w-3 h-3 text-slate-500" />
                         <a
-                          href="https://youtube.com/@asaprogrammer_"
+                          href={user?.link}
                           target="_blank"
                           rel="noreferrer"
                           className="text-sm text-blue-500 hover:underline"
                         >
-                          youtube.com/@asaprogrammer_
+                          {user?.link}
                         </a>
                       </>
                     </div>
@@ -201,7 +208,6 @@ const ProfilePage = () => {
               </div>
             </>
           )}
-
           <Posts type={feedType}/>
         </div>
       </div>
