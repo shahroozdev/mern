@@ -15,7 +15,7 @@ export const createPost = async (req, res) => {
       return res.status(422).json({ error: "Post must have text or image." });
     }
     if (img) {
-      const response = await cloudaniry.uploader.upload(img).catch((err)=> {console.log(err)});
+      const response = await cloudaniry.uploader.upload(img);
       img = response.secure_url;
     }
     const newPost = new Post({

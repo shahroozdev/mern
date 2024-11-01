@@ -17,7 +17,6 @@ const CreatePost = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-	console.log(text, img)
     if (text) {
       await mutate({ text, img });
       setText("");
@@ -33,14 +32,11 @@ const CreatePost = () => {
         if (reader.result) {
           setImg(reader.result.toString()); // Save base64 string in state
         }
-		reader.onerror = (error) => {
-			console.error("Error reading file:", error);
-		  };
       };
       reader.readAsDataURL(file);
     }
   };
-  console.log(img);
+
   return (
     <div className="flex p-4 items-start gap-4 border-b border-gray-700">
       <div className="avatar">
