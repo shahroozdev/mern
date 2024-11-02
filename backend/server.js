@@ -44,3 +44,5 @@ app.listen(port, () => {
   console.log(`Server is runing on port ${port}.`);
   connectMongoDB();
 });
+
+export default app;
